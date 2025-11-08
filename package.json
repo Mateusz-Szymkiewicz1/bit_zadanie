@@ -4,18 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"cd backend && node index.cjs --watch \"",
+    "dev": "concurrently \"vite\" \"cd backend && nodemon index.cjs \"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
+    "bcryptjs": "^3.0.3",
     "connect-mysql": "^4.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mysql": "^2.18.1",
+    "nodemon": "^3.1.10",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.5",

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Lis 05, 2025 at 11:11 PM
+-- Generation Time: Lis 08, 2025 at 11:24 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -55,15 +55,16 @@ INSERT INTO `miejsca` (`id`, `dostepne`, `uwagi`) VALUES
 CREATE TABLE `pracownicy` (
   `id` int(11) NOT NULL,
   `login` text NOT NULL,
-  `haslo` text NOT NULL
+  `haslo` text NOT NULL,
+  `admin` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pracownicy`
 --
 
-INSERT INTO `pracownicy` (`id`, `login`, `haslo`) VALUES
-(1, 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918');
+INSERT INTO `pracownicy` (`id`, `login`, `haslo`, `admin`) VALUES
+(1, 'admin', '$2b$10$WvPf3RmmXJIpkIgKgLJuw.QqWV7721S600oQpJU.6WBtUe8Lair/C', 1);
 
 -- --------------------------------------------------------
 
@@ -78,6 +79,14 @@ CREATE TABLE `rezerwacje` (
   `dzien` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `rezerwacje`
+--
+
+INSERT INTO `rezerwacje` (`id`, `pracownik`, `miejsce`, `dzien`) VALUES
+(13, 1, 1, '2025-11-09'),
+(14, 1, 1, '2025-11-10');
+
 -- --------------------------------------------------------
 
 --
@@ -89,6 +98,17 @@ CREATE TABLE `sessions` (
   `session` text NOT NULL,
   `expires` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `sessions`
+--
+
+INSERT INTO `sessions` (`sid`, `session`, `expires`) VALUES
+('IBE8VJF-NEzlgmXwVwWJjptVl-6aaplZ', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:02:34.495Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779754),
+('OgYDLjX3zJvZPY45Kiox-OusTUdbNcoD', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T22:18:32.901Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762813113),
+('QAmqo2Wv52iyo89aqN6-oSH-hvTdj3_h', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:01:37.450Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779697),
+('sede_nkYhRZuuuLKl8uJA86_W8utQH1q', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:00:58.511Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779659),
+('Yni6Zd_LrqDPm0DqZyWUjtL0WOnxnlX9', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:04:22.897Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779863);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -140,7 +160,7 @@ ALTER TABLE `pracownicy`
 -- AUTO_INCREMENT for table `rezerwacje`
 --
 ALTER TABLE `rezerwacje`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables

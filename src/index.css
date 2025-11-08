@@ -2,3 +2,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body{
+  @apply bg-neutral-800;
+  @apply text-white
+}
+
+button{
+  @apply cursor-pointer
+}
+
+th{
+  @apply p-3
+}
+
+td:hover{
+  @apply bg-red-700
+}
+
+td{
+  @apply bg-neutral-700;
+  @apply p-3 text-lg m-5 border border-red-700
+}
+
+.decision{
+  margin: auto;
+  position: fixed;
+  width: 400px;
+  height: 150px;
+  top: 30px;
+  left: 0;
+  right: 0;
+  max-width: 90%;
+  text-align: center;
+  padding-top: 30px;
+  border-width: 2px;
+  @apply z-50;
+}
+.decision span{
+font-size: 26px;
+font-weight: 600;
+}
+.decision button{
+  outline: none;
+  height: 35px;
+  width: 100px;
+  color: #fff;
+  margin-left: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#button_nie{
+  @apply bg-red-500 hover:bg-red-600;
+}
+#button_tak{
+  @apply bg-green-500 hover:bg-green-600;
+}
+@keyframes slideInDown{0%{-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0);visibility:visible}to{-webkit-transform:translateZ(0);transform:translateZ(0)}}
