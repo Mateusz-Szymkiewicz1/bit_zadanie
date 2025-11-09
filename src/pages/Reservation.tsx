@@ -5,7 +5,7 @@ function Reservation(props: any) {
   
   const [user, setUser] = useState()
   const [spots, setSpots] = useState<Spot[]>([])
-  const [miejsce, setMiejsce] = useState<string>(location.search.split('=')[1])
+  const [miejsce, setMiejsce] = useState<string>(location.search.split('=')[1] ?? "1")
   const [dzien, setDzien] = useState<string>("")
 
   interface Spot {

@@ -72,6 +72,22 @@ app.post('/user_reservations', (req,res) => {
   })
 })
 
+app.post('/reservations', (req,res) => {
+  if(req.session.user){
+    connection.query(`SELECT * FROM pracownicy WHERE login = ?`,[req.session.user], (err, rows, fields) => {
+      if(rows && rows[0].admin == 1){
+          connection.query(`SELECT pracownicy.login, rezerwacje.dzien, rezerwacje.miejsce,rezerwacje.id, miejsca.uwagi FROM pracownicy INNER JOIN rezerwacje ON rezerwacje.pracownik = pracownicy.id INNER JOIN miejsca ON miejsca.id = rezerwacje.miejsce`, (err2, rows2, fields2) => {
+            res.send(rows2)
+          })
+      }else{
+        return
+      }
+    })
+  }else{
+    return
+  }
+})
+
 app.post('/parking', (req,res) => {
   if(!req.session.user) return
   connection.query(`SELECT miejsca.*, rezerwacje.id AS rezerwacja FROM miejsca LEFT JOIN rezerwacje ON rezerwacje.miejsce = miejsca.id AND rezerwacje.dzien = CURDATE();`, (err, rows, fields) => {
@@ -86,6 +102,54 @@ app.post('/cancel', (req,res) => {
   })
 })
 
+app.post('/delete_spot', (req,res) => {
+  if(req.session.user){
+    connection.query(`SELECT * FROM pracownicy WHERE login = ?`,[req.session.user], (err, rows, fields) => {
+      if(rows && rows[0].admin == 1){
+        connection.query(`DELETE FROM miejsca WHERE id = ?`,[req.body.id], (err2, rows2, fields2) => {
+          res.json("done")
+        })
+      }else{
+        return
+      }
+    })
+  }else{
+    return
+  }
+})
+
+app.post('/delete_reservation', (req,res) => {
+  if(req.session.user){
+    connection.query(`SELECT * FROM pracownicy WHERE login = ?`,[req.session.user], (err, rows, fields) => {
+      if(rows && rows[0].admin == 1){
+        connection.query(`DELETE FROM rezerwacje WHERE id = ?`,[req.body.id], (err2, rows2, fields2) => {
+          res.json("done")
+        })
+      }else{
+        return
+      }
+    })
+  }else{
+    return
+  }
+})
+
+app.post('/edit_spot', (req,res) => {
+  if(req.session.user){
+    connection.query(`SELECT * FROM pracownicy WHERE login = ?`,[req.session.user], (err, rows, fields) => {
+      if(rows && rows[0].admin == 1){
+        connection.query(`UPDATE miejsca SET dostepne = ?, uwagi = ? WHERE id = ?`,[req.body.dostepne,req.body.uwagi,req.body.id], (err2, rows2, fields2) => {
+          res.json("done")
+        })
+      }else{
+        return
+      }
+    })
+  }else{
+    return
+  }
+})
+
 app.post('/reserve', (req,res) => {
   if(!req.session.user) return
   connection.query(`SELECT * FROM rezerwacje WHERE miejsce = ? AND dzien = ?`,[req.body.miejsce,req.body.dzien], (err, rows, fields) => {
@@ -94,7 +158,7 @@ app.post('/reserve', (req,res) => {
     }else{
       const date = new Date(req.body.dzien)
       const dayOnly = date.toISOString().split('T')[0]
-      connection.query(`INSERT INTO rezerwacje (pracownik,miejsce,dzien) VALUES ((SELECT id FROM pracownicy WHERE login = ?),?,?)`,[req.session.user,req.body.miejsce,dayOnly], (err, rows, fields) => {
+      connection.query(`INSERT INTO rezerwacje (pracownik,miejsce,dzien) VALUES ((SELECT id FROM pracownicy WHERE login = ?),?,?)`,[req.session.user,req.body.miejsce,dayOnly], (err2, rows2, fields2) => {
         res.json("done")
       })
     }

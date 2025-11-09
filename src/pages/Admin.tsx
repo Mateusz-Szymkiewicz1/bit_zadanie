@@ -1,9 +1,34 @@
 import { useEffect, useState } from "react"
+import { useDecision } from "../components/useDecision"
 
 function Admin(props: any) {
 
   const [user, setUser] = useState()
-  const [spots, setSpots] = useState([])
+  const [spots, setSpots] = useState<Spot[]>([])
+  const [reservations, setReservations] = useState<Rezerwacja[]>([])
+  const [refresh, setRefresh] = useState(false)
+
+  const [editId, setEditId] = useState(0)
+  const [editDostepne, setEditDostepne] = useState<string>("")
+  const [editUwagi, setEditUwagi] = useState<string>("")
+
+  const [tylkoDostepne, setTylkoDostepne] = useState(false)
+
+  interface Rezerwacja {
+    id: number,
+    miejsce: number,
+    dzien: string,
+    login: string,
+    uwagi: string
+  }
+
+  interface Spot {
+    id: number,
+    rezerwacja: number,
+    dostepne: number,
+    uwagi: string,
+  }
+
 
   useEffect(() => {
     fetch("http://localhost:3000/login", {
@@ -24,18 +49,164 @@ function Admin(props: any) {
         }).then(res => res.json()).then(res => {
           setSpots(res)
         })
+        fetch("http://localhost:3000/reservations", {
+          credentials: 'include',
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then(res => res.json()).then(res => {
+          console.log(res)
+          setReservations(res)
+        })
       }else{
         window.location.href = '/'
       }
     })
-  }, [])
+  }, [refresh])
+
+  const closeEdit = () => {
+    document.querySelector('.edit')!.classList.add("hidden")
+  }
+  const showEdit = (e: any) => {
+    document.querySelector('.edit')!.classList.remove("hidden")
+    const el = spots.find(x => x['id'] == e.target.dataset.id)
+    setEditId(el!['id'])
+    setEditDostepne(el!['dostepne']+"")
+    setEditUwagi(el!['uwagi'])
+  }
+
+  const submitEdit = async () => {
+    if (document.querySelector(".decision")) document.querySelector('.decision')!.remove()
+    const response = await useDecision().then(function () {
+      document.querySelector(".decision")!.remove()
+      return
+    }, function () {
+      document.querySelector(".decision")!.remove()
+      return "stop"
+    });
+    if(response) return
+    fetch("http://localhost:3000/edit_spot", {
+      credentials: 'include',
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: editId,
+        dostepne: editDostepne,
+        uwagi: editUwagi
+      }),
+    }).then(() => {
+      setRefresh(prev => !prev)
+      closeEdit()
+    })
+  }
+
+  const deleteSpot = async (e: any) => {
+    if (document.querySelector(".decision")) document.querySelector('.decision')!.remove()
+    const response = await useDecision().then(function () {
+      document.querySelector(".decision")!.remove()
+      return
+    }, function () {
+      document.querySelector(".decision")!.remove()
+      return "stop"
+    });
+    if(response) return
+    fetch("http://localhost:3000/delete_spot", {
+      credentials: 'include',
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: e.target.dataset.id
+      }),
+    }).then(() => {
+      props.setToast({type: "msg", text: "Usunięto!"})
+      setRefresh(prev => !prev)
+    })
+  }
+
+  const deleteReservation = async (e: any) => {
+    if (document.querySelector(".decision")) document.querySelector('.decision')!.remove()
+    const response = await useDecision().then(function () {
+      document.querySelector(".decision")!.remove()
+      return
+    }, function () {
+      document.querySelector(".decision")!.remove()
+      return "stop"
+    });
+    if(response) return
+    fetch("http://localhost:3000/delete_reservation", {
+      credentials: 'include',
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: e.target.dataset.id
+      }),
+    }).then(() => {
+      props.setToast({type: "msg", text: "Usunięto!"})
+      setRefresh(prev => !prev)
+    })
+  }
 
   return (
     <>
       {user && user['admin'] == 1 &&
-        <>
+        <div className="px-5 sm:px-10">
           <h1 className="text-red-600 font-semibold text-3xl sm:text-4xl text-center mt-24"><i className="fa fa-user-tie mr-2"></i>Panel administratora</h1>
-        </>
+          <h2 className="text-red-600 text-2xl sm:text-3xl mt-16"><i className="fa fa-parking mr-1"></i>Miejsca ({spots.length})</h2>
+          <div className="flex items-center my-2 mt-8">
+            <input checked={tylkoDostepne} onChange={(e) => setTylkoDostepne(e.target.checked)} type="checkbox" className="cursor-pointer w-4 h-4 text-red-600 bg-gray-600 border-gray-700 rounded-sm"></input>
+            <label className="ms-2 text-sm font-medium">Pokaż tylko dostępne</label>
+        </div>
+          <table className="shadow-lg text-lg sm:text-xl">
+            <thead>
+              <tr><th>Miejsce</th><th>Dostępne</th><th>Uwagi</th><th>Zajęte (Dziś)</th></tr>
+            </thead>
+            <tbody>
+              {spots.map(el => {
+                if(tylkoDostepne && el['dostepne'] == 0) return
+                return(
+                  <tr key={el['id']}><td>{el['id']}</td><td>{el['dostepne'] ? "Tak" : "Nie"}</td><td className="max-w-64 sm:max-w-96 break-all">{el['uwagi']}</td><td>{el['rezerwacja'] ? "Tak" : "Nie"}</td><td data-id={el['id']} onClick={showEdit} className="cursor-pointer"><i className="fa fa-pencil mr-1"></i>Edytuj</td><td data-id={el['id']} onClick={deleteSpot} className="cursor-pointer"><i className="fa fa-trash mr-1"></i>Usuń</td></tr>
+                )
+              })}
+            </tbody>
+          </table>
+          <h2 className="text-red-600 text-2xl sm:text-3xl mt-16"><i className="fa fa-parking mr-1"></i>Wszystkie rezerwacje ({reservations.length})</h2>
+          <table className="my-5 shadow-lg text-lg sm:text-xl">
+            <thead>
+              <tr><th>Miejsce</th><th>Pracownik</th><th>Dzień</th></tr>
+            </thead>
+            <tbody>
+              {reservations.map(el => {
+                return(
+                  <tr key={el['id']}><td>{el['miejsce']}</td><td>{el['login']}</td><td className="max-w-64 sm:max-w-96 break-all">{el['dzien'].split('T')[0]}</td><td data-id={el['id']} onClick={deleteReservation} className="cursor-pointer"><i className="fa fa-trash mr-1"></i>Usuń</td></tr>
+                )
+              })}
+            </tbody>
+          </table>
+          <div className="edit z-50 fixed hidden top-0 bottom-0 right-0 left-0 bg-neutral-800 flex justify-center items-center" style={{background: "rgba(50,50,50,0.9)"}}>
+            <div className="bg-neutral-700 p-5 pb-8 text-white">
+              <div className="flex justify-between">
+                <h1 className="text-xl font-semibold">Edytuj miejsce</h1>
+                <i className="fa fa-close mr-1 text-xl cursor-pointer" onClick={closeEdit}></i>
+              </div>
+              <div className="mt-5">
+              <label className="text-lg">Dostępne: </label>
+              <select value={editDostepne} onChange={(e) => setEditDostepne(e.target.value)} className="bg-neutral-500 outline-none ml-2 p-2">
+                <option value="1">TAK</option>
+                <option value="0">NIE</option>
+              </select>
+            </div>
+            <input type="text" value={editUwagi} onChange={(e) => setEditUwagi(e.target.value)} placeholder="Uwagi..." className="w-72 outline-none h-11 mt-3 bg-neutral-500 text-slate-200 px-3" />
+            <button onClick={submitEdit} className="block bg-red-700 p-3 py-2 mt-3 hover:bg-red-800"><i className="fa fa-pencil mr-1"></i>Edytuj</button>
+            </div>
+          </div>
+        </div>
       }
     </>
   )

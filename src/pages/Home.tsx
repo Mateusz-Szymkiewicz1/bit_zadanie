@@ -12,6 +12,8 @@ function Home(props: any) {
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
   const [refresh, setRefresh] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [tylkoDostepne, setTylkoDostepne] = useState(false)
 
   interface Rezerwacja {
     id: number,
@@ -46,6 +48,7 @@ function Home(props: any) {
             "Content-Type": "application/json",
           }
         }).then(res => res.json()).then(res => {
+          setLoading(false)
           setUserReservations(res)
         })
         fetch("http://localhost:3000/parking", {
@@ -57,6 +60,8 @@ function Home(props: any) {
         }).then(res => res.json()).then(res => {
           setSpots(res)
         })
+      }else{
+        setLoading(false)
       }
     })
   }, [refresh])
@@ -117,8 +122,8 @@ function Home(props: any) {
   }
 
   return (
-    <>
-      <h1 className="text-red-600 font-semibold text-3xl sm:text-4xl text-center mt-16">Firmowy system parkingowy</h1>
+    <div className="sm:px-10 px-5">
+      <h1 className="text-red-600 font-semibold text-3xl sm:text-4xl text-center mt-24"><i className="fa fa-car mr-2"></i>Firmowy system parkingowy</h1>
       {!user &&
         <>
           <h2 className="mt-4 text-center font-xl"><span className="text-red-500">Zaloguj się</span> aby uzyskać dostęp do rezerwacji</h2>
@@ -155,16 +160,10 @@ function Home(props: any) {
       }
       {user &&
         <>
-          {user && user['admin'] == 1 &&
-            <>
-              <h2 className="text-red-600 mx-5 text-2xl sm:text-3xl mt-16"><i className="fa fa-user-tie mr-1"></i>Panel administratora</h2>
-              <NavLink to={"/admin"}><button className="bg-red-700 p-4 mx-5 my-3 hover:bg-red-800"><i className="fa fa-cog mr-2"></i>Przejdź do panelu</button></NavLink>
-            </>
-          }
-          <h2 className="text-red-600 mx-5 text-2xl sm:text-3xl mt-16"><i className="fa fa-lock mr-1"></i>Twoje rezerwacje ({userReservations.length})</h2>
-          <NavLink to={"/reservation"}><button className="bg-red-700 p-4 mx-5 my-3 hover:bg-red-800"><i className="fa fa-plus mr-1"></i>Dodaj rezerwację</button></NavLink>
+          <h2 className="text-red-600 text-2xl sm:text-3xl mt-16"><i className="fa fa-lock mr-1"></i>Twoje rezerwacje ({userReservations.length})</h2>
+          <NavLink to={"/reservation"}><button className="bg-red-700 p-4 my-3 hover:bg-red-800"><i className="fa fa-plus mr-1"></i>Dodaj rezerwację</button></NavLink>
           {userReservations.length > 0 &&
-            <table className="m-5 shadow-lg text-lg sm:text-xl">
+            <table className="my-5 shadow-lg text-lg sm:text-xl">
               <thead>
                 <tr><th>Miejsce</th><th>Dzień</th><th>Uwagi</th></tr>
               </thead>
@@ -178,15 +177,20 @@ function Home(props: any) {
             </table>
           }
           {userReservations.length == 0 &&
-            <p className="text-lg mx-5 mt-3">Brak rezerwacji...</p>
+            <p className="text-lg mt-3">Brak rezerwacji...</p>
           }
-          <h2 className="text-red-600 mx-5 text-2xl sm:text-3xl mt-16"><i className="fa fa-parking mr-1"></i>Miejsca ({spots.length})</h2>
-          <table className="m-5 shadow-lg text-lg sm:text-xl">
+          <h2 className="text-red-600 text-2xl sm:text-3xl mt-16"><i className="fa fa-parking mr-1"></i>Miejsca ({spots.length})</h2>
+          <div className="flex items-center my-2 mt-8">
+            <input checked={tylkoDostepne} onChange={(e) => setTylkoDostepne(e.target.checked)} type="checkbox" className="cursor-pointer w-4 h-4 text-red-600 bg-gray-600 border-gray-700 rounded-sm"></input>
+            <label className="ms-2 text-sm font-medium">Pokaż tylko dostępne</label>
+        </div>
+          <table className="shadow-lg text-lg sm:text-xl">
             <thead>
               <tr><th>Miejsce</th><th>Dostępne</th><th>Uwagi</th><th>Zajęte (Dziś)</th></tr>
             </thead>
             <tbody>
               {spots.map(el => {
+                if(tylkoDostepne && el['dostepne'] == 0) return
                 return(
                   <tr key={el['id']}><td>{el['id']}</td><td>{el['dostepne'] ? "Tak" : "Nie"}</td><td>{el['uwagi']}</td><td>{el['rezerwacja'] ? "Tak" : "Nie"}</td>{el['dostepne'] == 1 &&
                     <td className="p-0!"><NavLink className="block p-3" to={'/reservation?m='+el['id']}><i className="fa fa-anchor-lock mr-1"></i>Rezerwuj</NavLink></td>
@@ -201,7 +205,15 @@ function Home(props: any) {
           </table>
         </>
       }
-    </>
+      {!user && loading &&
+        <div role="status" className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-neutral-800 z-50">
+        <svg aria-hidden="true" className="inline w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+        </svg>
+        </div>
+      }
+    </div>
   )
 }
 

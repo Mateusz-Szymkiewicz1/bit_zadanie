@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Lis 08, 2025 at 11:24 PM
+-- Generation Time: Lis 09, 2025 at 12:57 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -85,7 +85,7 @@ CREATE TABLE `rezerwacje` (
 
 INSERT INTO `rezerwacje` (`id`, `pracownik`, `miejsce`, `dzien`) VALUES
 (13, 1, 1, '2025-11-09'),
-(14, 1, 1, '2025-11-10');
+(15, 1, 3, '2025-12-27');
 
 -- --------------------------------------------------------
 
@@ -104,8 +104,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`sid`, `session`, `expires`) VALUES
+('4OuqhEU5v1XGPfmdsa_YGk7Fiqrb7scp', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T22:31:17.592Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762813878),
 ('IBE8VJF-NEzlgmXwVwWJjptVl-6aaplZ', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:02:34.495Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779754),
-('OgYDLjX3zJvZPY45Kiox-OusTUdbNcoD', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T22:18:32.901Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762813113),
 ('QAmqo2Wv52iyo89aqN6-oSH-hvTdj3_h', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:01:37.450Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779697),
 ('sede_nkYhRZuuuLKl8uJA86_W8utQH1q', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:00:58.511Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779659),
 ('Yni6Zd_LrqDPm0DqZyWUjtL0WOnxnlX9', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:04:22.897Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779863);
@@ -160,7 +160,7 @@ ALTER TABLE `pracownicy`
 -- AUTO_INCREMENT for table `rezerwacje`
 --
 ALTER TABLE `rezerwacje`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
