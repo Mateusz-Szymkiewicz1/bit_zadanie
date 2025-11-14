@@ -100,6 +100,7 @@ function Home(props: any) {
   }
 
   const cancel = async (e: any) => {
+    const id = e.currentTarget.dataset.id
     if (document.querySelector(".decision")) document.querySelector('.decision')!.remove()
     const response = await useDecision().then(function () {
       document.querySelector(".decision")!.remove()
@@ -116,18 +117,21 @@ function Home(props: any) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: e.target.dataset.id
+        id: id
       }),
-    }).then(() => setRefresh(prev => !prev))
+    }).then(() => {
+      props.setToast({type: "msg", text: "Odwołano!"})
+      setRefresh(prev => !prev)
+    })
   }
 
   return (
     <div className="sm:px-10 px-5">
-      <h1 className="text-red-600 font-semibold text-3xl sm:text-4xl text-center mt-24"><i className="fa fa-car mr-2"></i>Firmowy system parkingowy</h1>
+      <h1 className="text-red-600 text-shadow-lg font-semibold text-3xl sm:text-4xl text-center mt-24"><i className="fa fa-car mr-2"></i>Firmowy system parkingowy</h1>
       {!user &&
         <>
           <h2 className="mt-4 text-center font-xl"><span className="text-red-500">Zaloguj się</span> aby uzyskać dostęp do rezerwacji</h2>
-          <form className="space-y-4 bg-neutral-700 p-5 sm:w-[50%] mx-auto mt-10 w-full">
+          <form className="shadow-xl space-y-4 bg-neutral-700 p-5 sm:w-[50%] mx-auto mt-10 w-full">
             <div>
               <label className="block text-sm font-medium text-slate-200"><i className="fa fa-user mr-1"></i>Użytkownik</label>
               <input type="text" maxLength={50} onChange={(e) => setLogin(e.target.value)} id="username" name="username" className="mt-1 p-2 w-full bg-neutral-600 rounded-md focus:outline-none"></input>
@@ -163,18 +167,25 @@ function Home(props: any) {
           <h2 className="text-red-600 text-2xl sm:text-3xl mt-16"><i className="fa fa-lock mr-1"></i>Twoje rezerwacje ({userReservations.length})</h2>
           <NavLink to={"/reservation"}><button className="bg-red-700 p-4 my-3 hover:bg-red-800"><i className="fa fa-plus mr-1"></i>Dodaj rezerwację</button></NavLink>
           {userReservations.length > 0 &&
-            <table className="my-5 shadow-lg text-lg sm:text-xl">
-              <thead>
-                <tr><th>Miejsce</th><th>Dzień</th><th>Uwagi</th></tr>
-              </thead>
-              <tbody>
+            <table className="w-full text-md bg-neutral-600 shadow-xl rounded mb-4">
+            <tbody>
+                <tr className="border-b text-left">
+                    <th className="p-3 px-5">Miejsce</th>
+                    <th className="p-3 px-5">Dzień</th>
+                    <th className="p-3 px-5">Uwagi</th>
+                </tr>   
               {userReservations.map((el,i) => {
                 return(
-                  <tr key={i}><td>{el['miejsce']}</td><td>{el['dzien'].split('T')[0]}</td><td>{el['uwagi']}</td><td onClick={cancel} data-id={el['id']} className="cursor-pointer"><i className="fa fa-cancel mr-1"></i>Anuluj</td></tr>
+                  <tr key={i} className="border-b hover:bg-neutral-600 bg-neutral-700">
+                    <td className="p-3 px-5">{el['miejsce']}</td>
+                    <td className="p-3 px-5">{el['dzien'].split('T')[0]}</td>
+                    <td className="p-3 px-5">{el['uwagi']}</td>
+                    <td className="p-3 px-5 flex justify-end"><button data-id={el['id']} onClick={cancel} type="button" className="mr-3 text-sm bg-red-500 hover:bg-red-700 py-1 px-2 rounded focus:outline-none"><i className="fa fa-trash mr-1"></i>Anuluj</button></td>
+                </tr>
                 )
               })}
-              </tbody>
-            </table>
+            </tbody>
+             </table>
           }
           {userReservations.length == 0 &&
             <p className="text-lg mt-3">Brak rezerwacji...</p>
@@ -184,25 +195,33 @@ function Home(props: any) {
             <input checked={tylkoDostepne} onChange={(e) => setTylkoDostepne(e.target.checked)} type="checkbox" className="cursor-pointer w-4 h-4 text-red-600 bg-gray-600 border-gray-700 rounded-sm"></input>
             <label className="ms-2 text-sm font-medium">Pokaż tylko dostępne</label>
         </div>
-          <table className="shadow-lg text-lg sm:text-xl">
-            <thead>
-              <tr><th>Miejsce</th><th>Dostępne</th><th>Uwagi</th><th>Zajęte (Dziś)</th></tr>
-            </thead>
+        <table className="w-full text-md bg-neutral-600 shadow-xl rounded mb-4">
             <tbody>
-              {spots.map(el => {
+                <tr className="border-b text-left">
+                    <th className="p-3 px-5">Miejsce</th>
+                    <th className="p-3 px-5">Dostępne</th>
+                    <th className="p-3 px-5">Uwagi</th>
+                    <th className="p-3 px-5">Zajęte (dziś)</th>
+                </tr>
+                {spots.map(el => {
                 if(tylkoDostepne && el['dostepne'] == 0) return
                 return(
-                  <tr key={el['id']}><td>{el['id']}</td><td>{el['dostepne'] ? "Tak" : "Nie"}</td><td>{el['uwagi']}</td><td>{el['rezerwacja'] ? "Tak" : "Nie"}</td>{el['dostepne'] == 1 &&
-                    <td className="p-0!"><NavLink className="block p-3" to={'/reservation?m='+el['id']}><i className="fa fa-anchor-lock mr-1"></i>Rezerwuj</NavLink></td>
-                  }
-                  {el['dostepne'] != 1 &&
-                    <td></td>
-                  }
-                  </tr>
+                  <tr key={el['id']} className="border-b hover:bg-neutral-600 bg-neutral-700">
+                    <td className="p-3 px-5">{el['id']}</td>
+                    <td className="p-3 px-5">{el['dostepne'] ? "Tak" : "Nie"}</td>
+                    <td className="p-3 px-5">{el['uwagi']}</td>
+                    <td className="p-3 px-5">{el['rezerwacja'] ? "Tak" : "Nie"}</td>
+                    {el['dostepne'] == 1 &&
+                      <td className="p-3 px-5 flex justify-end"><NavLink to={'/reservation?m='+el['id']}><button type="button" className="mr-3 text-sm bg-red-500 hover:bg-red-700 py-1 px-2 rounded focus:outline-none"><i className="fa fa-lock mr-1"></i>Rezerwuj</button></NavLink></td>
+                    }
+                    {el['dostepne'] != 1 &&
+                      <td></td>
+                    }
+                </tr>
                 )
-              })}
+              })}          
             </tbody>
-          </table>
+        </table>
         </>
       }
       {!user && loading &&

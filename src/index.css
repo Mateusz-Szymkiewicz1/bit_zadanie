@@ -4,25 +4,11 @@
 @tailwind utilities;
 
 body{
-  @apply bg-neutral-800;
-  @apply text-white
+  @apply bg-neutral-800 text-white
 }
 
 button{
   @apply cursor-pointer
-}
-
-th{
-  @apply p-3
-}
-
-td:hover{
-  @apply bg-red-700
-}
-
-td{
-  @apply bg-neutral-700;
-  @apply p-3 text-lg m-5 border border-red-700
 }
 
 .decision{

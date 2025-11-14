@@ -81,8 +81,8 @@ function Reservation(props: any) {
     <>
       {user &&
         <>
-          <h1 className="text-red-600 font-semibold text-3xl sm:text-4xl text-center mt-24"><i className="fa fa-lock mr-2"></i>Dodaj rezerwację</h1>
-          <form className="flex flex-col gap-3 bg-neutral-600 mx-auto w-fit p-5 mt-10">
+          <h1 className="text-shadow-lg text-red-600 font-semibold text-3xl sm:text-4xl text-center mt-24"><i className="fa fa-lock mr-2"></i>Dodaj rezerwację</h1>
+          <form className="flex shadow-xl flex-col gap-3 bg-neutral-600 mx-auto w-fit p-5 mt-10">
             <div>
               <label className="text-lg">Wybierz nr. miejsca: </label>
               <select value={miejsce} onChange={(e) => setMiejsce(e.target.value)} className="bg-neutral-500 outline-none ml-2 p-2">

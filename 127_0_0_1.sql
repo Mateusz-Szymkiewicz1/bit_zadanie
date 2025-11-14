@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Lis 09, 2025 at 12:57 PM
+-- Generation Time: Lis 13, 2025 at 07:24 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -43,8 +43,7 @@ INSERT INTO `miejsca` (`id`, `dostepne`, `uwagi`) VALUES
 (1, 1, ''),
 (2, 1, ''),
 (3, 1, ''),
-(4, 0, ''),
-(5, 1, 'Miejsce dla niepełnosprawnych');
+(4, 0, 'Tymczasowo wyłączone z użytku');
 
 -- --------------------------------------------------------
 
@@ -79,14 +78,6 @@ CREATE TABLE `rezerwacje` (
   `dzien` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `rezerwacje`
---
-
-INSERT INTO `rezerwacje` (`id`, `pracownik`, `miejsce`, `dzien`) VALUES
-(13, 1, 1, '2025-11-09'),
-(15, 1, 3, '2025-12-27');
-
 -- --------------------------------------------------------
 
 --
@@ -104,11 +95,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`sid`, `session`, `expires`) VALUES
-('4OuqhEU5v1XGPfmdsa_YGk7Fiqrb7scp', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T22:31:17.592Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762813878),
-('IBE8VJF-NEzlgmXwVwWJjptVl-6aaplZ', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:02:34.495Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779754),
-('QAmqo2Wv52iyo89aqN6-oSH-hvTdj3_h', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:01:37.450Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779697),
-('sede_nkYhRZuuuLKl8uJA86_W8utQH1q', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:00:58.511Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779659),
-('Yni6Zd_LrqDPm0DqZyWUjtL0WOnxnlX9', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-10T13:04:22.897Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1762779863);
+('3WQUBuyTCbT6czgckCpKGCjc8HUH4UUO', '{\"cookie\":{\"originalMaxAge\":172800000,\"expires\":\"2025-11-15T17:41:55.269Z\",\"httpOnly\":true,\"path\":\"/\"},\"user\":\"admin\"}', 1763228515);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -160,7 +147,7 @@ ALTER TABLE `pracownicy`
 -- AUTO_INCREMENT for table `rezerwacje`
 --
 ALTER TABLE `rezerwacje`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
