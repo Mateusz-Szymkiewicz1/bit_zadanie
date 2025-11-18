@@ -165,4 +165,8 @@ app.post('/reserve', (req,res) => {
   })
 })
 
+app.get('/connection', (req,res) => {
+  res.json("ok")
+})
+
 app.listen(3000)

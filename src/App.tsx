@@ -7,11 +7,14 @@ import { useState, useEffect } from 'react';
 import Toast from './components/Toast';
 import Reservation from './pages/Reservation';
 import Admin from './pages/Admin';
+import NoConnection from './pages/NoConnection';
 
 function App() {
 
   const [msg,setMsg] = useState()
   const location = useLocation();
+  const [connection, setConnection] = useState(true)
+
   const closeToast = () => {
     setMsg(undefined)
   }
@@ -20,28 +23,36 @@ function App() {
   }
 
   useEffect(() => {
-      window.scrollTo(0,0)
-      if(msg && !msg['stay']){
-        setMsg(undefined)
-      }
-    }, [location])
+    window.scrollTo(0,0)
+    if(msg && !msg['stay']){
+      setMsg(undefined)
+    }
+    fetch("http://localhost:3000/connection").catch(err => {
+      setConnection(false)
+    })
+  }, [location])
 
   return (
-    <>
       <div>
         <Header key={location.pathname} ></Header>
         <Routes>
-          <Route path="/" element={<Home setToast={setToast} />} />
-          <Route path="/admin" element={<Admin setToast={setToast} />} />
-          <Route path="/reservation" element={<Reservation setToast={setToast} />} />
-          <Route path="*" element={<NoMatch />} />
+          {connection && 
+            <>
+            <Route path="/" element={<Home setToast={setToast} />} />
+            <Route path="/admin" element={<Admin setToast={setToast} />} />
+            <Route path="/reservation" element={<Reservation setToast={setToast} />} />
+            <Route path="*" element={<NoMatch />} />
+            </>
+          }
+          {!connection &&
+            <Route path="*" element={<NoConnection />} />
+          }
         </Routes>
         {msg &&
           <Toast msg={msg} closeToast={closeToast}></Toast>
         }
         <Footer></Footer>
       </div>
-    </>
   )
 }
 
