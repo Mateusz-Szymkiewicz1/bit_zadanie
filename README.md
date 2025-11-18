@@ -1,8 +1,8 @@
 Jak uruchomić projekt:
 
 w folderze projektu: 
-npm install
+npm install, 
 npm run dev
 
 potrzebny będzie też mysql (ja używam xampp, eksport bazy dostępny w pliku .sql)
-w bazie istnieje jeden użytkownik - admin, hasło: admin
+, w bazie istnieje jeden użytkownik - admin, hasło: admin
